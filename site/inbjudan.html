@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Swell – You're invited</title>
+  <meta name="description" content="A friend invited you to Swell. Join and you both get a month of Swell+ for free.">
+  <meta name="robots" content="noindex">
+  <meta property="og:title" content="You're invited to Swell 🌊">
+  <meta property="og:description" content="Your camera roll as a feed. Join with this invite and you both get a month of Swell+ for free.">
+  <meta property="og:image" content="https://zc5ckfmvm4-dotcom.github.io/swell/site/img/icon.png">
+  <link rel="icon" href="img/favicon.png">
+  <link rel="apple-touch-icon" href="img/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .code-box { margin: 28px 0 10px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .code {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 34px; letter-spacing: 0.12em;
+      padding: 12px 18px; border: 1px solid var(--hairline); border-radius: 14px; background: rgba(127, 127, 127, 0.06);
+    }
+    .btn {
+      display: inline-block; padding: 14px 22px; border-radius: 999px; font: 600 17px var(--sans);
+      text-decoration: none; border: 0; cursor: pointer;
+    }
+    .btn.primary { background: var(--thread); color: #fff; }
+    .btn.secondary { background: transparent; color: var(--ink); border: 1px solid var(--hairline); }
+    .buttons { display: flex; gap: 12px; flex-wrap: wrap; margin: 26px 0 8px; }
+    .steps { padding-left: 1.2em; font-size: 18px; }
+    .steps li { margin: 8px 0; }
+    .copied { color: var(--muted); font-size: 15px; min-height: 1.2em; }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="brand" href="./"><img src="img/icon.png" alt="">Swell</a>
+  </header>
+
+  <main>
+    <p class="kicker" data-i18n="kicker">Invitation</p>
+    <h1 data-i18n="title">You're invited to Swell.</h1>
+    <p class="lead" data-i18n="lead">Swell turns your camera roll into a feed, and old days come back as waves. Join with this invite and you <strong>both get a month of Swell+</strong> for free.</p>
+
+    <div class="code-box" id="codeBox" hidden>
+      <span class="code" id="code"></span>
+      <button class="btn secondary" id="copy" data-i18n="copy">Copy code</button>
+    </div>
+    <p class="copied" id="copied"></p>
+
+    <div class="buttons">
+      <a class="btn primary" href="https://apps.apple.com/app/id6822774773" data-i18n="get">Get Swell on the App Store</a>
+      <a class="btn secondary" id="open" href="#" hidden data-i18n="open">I have Swell, open it</a>
+    </div>
+
+    <h2 data-i18n="howTitle">How it works</h2>
+    <ol class="steps">
+      <li data-i18n="step1">Get Swell from the App Store (it's free).</li>
+      <li data-i18n="step2">Open the Friends tab and create an account.</li>
+      <li data-i18n="step3">Tap "I have Swell, open it" here, or enter the code under Friends → My friends → Add.</li>
+    </ol>
+    <p class="updated" data-i18n="fine">The month is for new accounts, once per person. Your photos never leave your phone.</p>
+  </main>
+
+  <footer>
+    © 2026 Swell · <a href="./">Home</a> · <a href="integritet.html">Privacy policy</a> · <a href="support.html">Support</a>
+  </footer>
+
+  <script>
+    const sv = {
+      kicker: "Inbjudan",
+      title: "Du är inbjuden till Swell.",
+      lead: "Swell gör din kamerarulle till ett flöde, och gamla dagar kommer tillbaka som vågor. Går du med via den här inbjudan får <strong>ni båda en månad Swell+</strong> gratis.",
+      copy: "Kopiera koden",
+      get: "Hämta Swell på App Store",
+      open: "Jag har Swell, öppna",
+      howTitle: "Så gör du",
+      step1: "Hämta Swell på App Store (gratis).",
+      step2: "Öppna fliken Vänner och skapa ett konto.",
+      step3: "Tryck på \"Jag har Swell, öppna\" här, eller skriv in koden under Vänner → Mina vänner → Lägg till.",
+      fine: "Månaden gäller nya konton, en gång per person. Dina bilder lämnar aldrig telefonen.",
+      copied: "Koden är kopierad."
+    };
+    const swedish = (navigator.language || "").toLowerCase().startsWith("sv");
+    if (swedish) {
+      document.documentElement.lang = "sv";
+      document.title = "Swell – Du är inbjuden";
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const text = sv[el.dataset.i18n];
+        if (text) el.innerHTML = text;
+      });
+    }
+
+    // Koden kommer från länken (?k=ABCD2345). Bara de tecken appen använder släpps igenom.
+    const raw = new URLSearchParams(location.search).get("k") || "";
+    const code = raw.toUpperCase().replace(/[^A-Z2-9]/g, "");
+    if (code.length === 8) {
+      document.getElementById("code").textContent = code;
+      document.getElementById("codeBox").hidden = false;
+      const open = document.getElementById("open");
+      open.href = "vagor://inbjudan/" + code;
+      open.hidden = false;
+      document.getElementById("copy").addEventListener("click", async () => {
+        try { await navigator.clipboard.writeText(code); } catch (e) {}
+        document.getElementById("copied").textContent = swedish ? sv.copied : "Code copied.";
+      });
+    }
+  </script>
+</body>
+</html>
